@@ -6,15 +6,17 @@ function install(globalObject) {
       '(window/global/etc) before calling install().'
     );
   }
-  
-  var done = function (cb, eb) {
-    this.then(cb, eb).then(null, function (err) {
+
+  var promiseDone = function (promise, onFulfill, onError) {
+    promise
+    .then(onFulfill, onError)
+    .then(null, function (err) {
       setTimeout(function () {
         throw err;
       }, 0);
     });
   };
-
+  
   var jasmine = globalObject.jasmine;
 
   globalObject.pit = function pit(specName, promiseBuilder) {
@@ -27,12 +29,11 @@ function install(globalObject) {
         try {
           var promise = promiseBuilder();
           if (promise && promise.then) {
-            if (!promise.constructor.prototype.done) {
-              promise.constructor.prototype.done = done;
-            }
             promise.then(undefined, function(err) {
               error = err; isFinished = true;
-            }).done(function() {
+            });
+
+            promiseDone(promise, function() {
               isFinished = true;
             });
           } else {
