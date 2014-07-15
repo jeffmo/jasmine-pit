@@ -7,16 +7,6 @@ function install(globalObject) {
     );
   }
 
-  var promiseDone = function (promise, onFulfill, onError) {
-    promise
-    .then(onFulfill, onError)
-    .then(null, function (err) {
-      setTimeout(function () {
-        throw err;
-      }, 0);
-    });
-  };
-  
   var jasmine = globalObject.jasmine;
 
   globalObject.pit = function pit(specName, promiseBuilder) {
@@ -29,12 +19,11 @@ function install(globalObject) {
         try {
           var promise = promiseBuilder();
           if (promise && promise.then) {
-            promise.then(undefined, function(err) {
-              error = err; isFinished = true;
-            });
-
-            promiseDone(promise, function() {
+            promise.then(function() {
               isFinished = true;
+            })
+            .catch(function(err) {
+              error = err; isFinished = true;
             });
           } else {
             isFinished = true;
