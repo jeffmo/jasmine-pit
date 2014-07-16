@@ -1,7 +1,7 @@
 {
   "name": "jasmine-pit",
   "version": "1.0.2",
-  "main": "main.js",
+  "main": "index.js",
   "homepage": "https://github.com/jeffmo/jasmine-pit",
   "keywords": "testing promises jasmine pit jasmine-pit promise error",
   "author": {
