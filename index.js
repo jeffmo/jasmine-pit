@@ -21,8 +21,7 @@ function install(globalObject) {
           if (promise && promise.then) {
             promise.then(function() {
               isFinished = true;
-            })
-            .catch(function(err) {
+            })['catch'](function(err) {
               error = err; isFinished = true;
             });
           } else {
