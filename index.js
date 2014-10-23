@@ -12,12 +12,13 @@ function install(globalObject) {
   globalObject.pit = function pit(specName, promiseBuilder) {
     var jasmineEnv = jasmine.getEnv();
     return jasmineEnv.it(specName, function() {
+      var spec = this;
       var isFinished = false;
       var error = null;
 
       jasmineEnv.currentSpec.runs(function() {
         try {
-          var promise = promiseBuilder();
+          var promise = promiseBuilder.call(spec);
           if (promise && promise.then) {
             promise.then(function() {
               isFinished = true;
