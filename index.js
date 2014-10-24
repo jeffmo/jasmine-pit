@@ -10,37 +10,43 @@ function install(globalObject) {
   var jasmine = globalObject.jasmine;
 
   globalObject.pit = function pit(specName, promiseBuilder) {
-    var jasmineEnv = jasmine.getEnv();
-    return jasmineEnv.it(specName, function() {
-      var spec = this;
-      var isFinished = false;
-      var error = null;
+    return jasmine.getEnv().it(specName, runPitTest.bind(null, promiseBuilder));
+  };
 
-      jasmineEnv.currentSpec.runs(function() {
-        try {
-          var promise = promiseBuilder.call(spec);
-          if (promise && promise.then) {
-            promise.then(function() {
-              isFinished = true;
-            })['catch'](function(err) {
-              error = err; isFinished = true;
-            });
-          } else {
-            isFinished = true;
-          }
-        } catch (e) {
-          error = e;
-          isFinished = true;
-        }
-      });
-
-      jasmineEnv.currentSpec.waitsFor(function() { return isFinished; });
-      jasmineEnv.currentSpec.runs(function() { if (error) throw error; });
-    });
+  globalObject.pit.only = function pitOnly(specName, promiseBuilder) {
+    return jasmine.getEnv().it.only(specName, runPitTest.bind(null, promiseBuilder));
   };
 
   globalObject.xpit = function xpit(specName, promiseBuilder) {
-    return jasmine.getEnv().xit(specName, promiseBuilder);
+    return jasmine.getEnv().xit(specName, runPitTest.bind(null, promiseBuilder));
+  };
+
+  function runPitTest(promiseBuilder) {
+    var jasmineEnv = jasmine.getEnv();
+    var spec = this;
+    var isFinished = false;
+    var error = null;
+
+    jasmineEnv.currentSpec.runs(function() {
+      try {
+        var promise = promiseBuilder.call(spec);
+        if (promise && promise.then) {
+          promise.then(function() {
+            isFinished = true;
+          })['catch'](function(err) {
+            error = err; isFinished = true;
+          });
+        } else {
+          isFinished = true;
+        }
+      } catch (e) {
+        error = e;
+        isFinished = true;
+      }
+    });
+
+    jasmineEnv.currentSpec.waitsFor(function() { return isFinished; });
+    jasmineEnv.currentSpec.runs(function() { if (error) throw error; });
   };
 }
 
