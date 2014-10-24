@@ -30,15 +30,15 @@ function install(globalObject) {
     jasmineEnv.currentSpec.runs(function() {
       try {
         var promise = promiseBuilder.call(spec);
-        if (promise && promise.then) {
-          promise.then(function() {
-            isFinished = true;
-          })['catch'](function(err) {
-            error = err; isFinished = true;
-          });
-        } else {
-          isFinished = true;
+        if (!promise || !promise.then) {
+          throw new Error('pit() tests should return a promise');
         }
+
+        promise.then(function() {
+          isFinished = true;
+        })['catch'](function(err) {
+          error = err; isFinished = true;
+        });
       } catch (e) {
         error = e;
         isFinished = true;
