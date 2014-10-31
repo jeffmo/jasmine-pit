@@ -23,11 +23,11 @@ function install(globalObject) {
 
   function runPitTest(promiseBuilder) {
     var jasmineEnv = jasmine.getEnv();
-    var spec = this;
+    var spec = jasmineEnv.currentSpec;
     var isFinished = false;
     var error = null;
 
-    jasmineEnv.currentSpec.runs(function() {
+    spec.runs(function() {
       try {
         var promise = promiseBuilder.call(spec);
         if (!promise || !promise.then) {
@@ -45,8 +45,8 @@ function install(globalObject) {
       }
     });
 
-    jasmineEnv.currentSpec.waitsFor(function() { return isFinished; });
-    jasmineEnv.currentSpec.runs(function() { if (error) throw error; });
+    spec.waitsFor(function() { return isFinished; });
+    spec.runs(function() { if (error) throw error; });
   };
 }
 
