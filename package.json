@@ -11,5 +11,6 @@
   "repository": {
     "type": "git",
     "url": "git@github.com:jeffmo/jasmine-pit.git"
-  }
+  },
+  "license": "MIT"
 }
